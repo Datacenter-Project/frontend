@@ -4,7 +4,6 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
-import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -13,7 +12,6 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
-import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -59,6 +57,7 @@ export default function MediaControlCard(props) {
   let name = props.name
   let text = props.text
   let uuid = props.uuid
+  let image = props.image
   const [open, setOpen] = React.useState(false);
   const [scroll, setScroll] = React.useState('paper');
   const [grammarOpen, setGrammarOpen] = React.useState(false);
@@ -87,7 +86,7 @@ export default function MediaControlCard(props) {
         <Card className={classes.root}>
         <CardMedia
             className={classes.cover}
-            image="https://hatrabbits.com/wp-content/uploads/2017/01/random.jpg"
+            image={image}
             title="Live from space album cover"
         />
         <div className={classes.details}>

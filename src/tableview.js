@@ -9,6 +9,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import axios from "axios";
+import { useSnackbar } from 'notistack';
 
 const columns = [
   { label: 'Erroneous Sentence', id: 'errorneous_sentence', minWidth: 170 },
@@ -47,6 +48,8 @@ export default function StickyHeadTable(props) {
   const classes = useStyles();
   let isLoading = false;
   const [results, setResults] = React.useState(null);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  
   React.useEffect(() => {
     checkGrammar(props.uuid)
   },[]);
@@ -79,10 +82,12 @@ export default function StickyHeadTable(props) {
             } 
             setResults(rows)
             isLoading = false;
+            enqueueSnackbar('Grammar Check Successful!', {variant: 'success'});
         })
         .catch(err => {
             console.log(err);
             isLoading = false;
+            enqueueSnackbar('Something went wrong while fetching documents. Please refresh.', {variant: 'error'});
         })
   }
 

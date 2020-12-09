@@ -11,7 +11,6 @@ import DocumentList from './listview';
 import { useSnackbar } from 'notistack';
 import axios from "axios";
 import LinearProgress from '@material-ui/core/LinearProgress';
-import no_results from './no_results.png';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -75,16 +74,21 @@ const useStyles = makeStyles(theme => ({
 export default function SearchAppBar() {
   const classes = useStyles();
   const [documents, setDocuments] = React.useState(null);
+  const [images, setImages] = React.useState(null);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   let searchText = "";
   let isLoading = false;
 
-  // Similar to componentDidMount and componentDidUpdate:
   React.useEffect(() => {
     isLoading = true;
     getDocs('Data fetched successfully!');
   }, []);
 
+  React.useEffect(() => {
+    if(documents) {
+        getImages()
+    }
+  }, [documents]);
   
   const getDocs = (successText) => {
     axios
@@ -97,6 +101,7 @@ export default function SearchAppBar() {
     .then(({ data }) => {
       setDocuments(data)
       enqueueSnackbar(successText, {variant: 'success'});
+      
       isLoading = false;
     })
     .catch(err => {
@@ -104,6 +109,25 @@ export default function SearchAppBar() {
       console.log(err);
       isLoading = false;
     })
+  }
+
+  const getImages = () => {
+    let i;
+    let imagesList = []
+    for (i = 0; i < documents.length; i++) {
+        let uuid = documents[i]._source.uuid
+        imagesList.push({uuid: uuid, image: "https://source.unsplash.com/201x201/?page"})
+        // axios
+        //     .get(`http://localhost:5000/getImage`)
+        //     .then(({ data }) => {
+        //         console.log(data.image)
+        //         imagesList.push({uuid: uuid, image: data})
+        //     })
+        //     .catch(err => {
+        //         console.log(err);
+        // })
+    }
+    setImages(imagesList)
   }
 
   let handleUploadClick = (e) => {
@@ -170,7 +194,7 @@ export default function SearchAppBar() {
               <SearchIcon />
             </div>
             <InputBase
-              placeholder="Search for a document…"
+              placeholder="Search for any text…"
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput
@@ -193,8 +217,8 @@ export default function SearchAppBar() {
             </label>
         </Toolbar>
       </AppBar>
-      {!isLoading && documents? (
-            <DocumentList documents = {documents}/>
+      {!isLoading && documents && images? (
+            <DocumentList documents = {documents} images = {images}/>
         ) : <LinearProgress color="secondary"/>
       }
     </div>

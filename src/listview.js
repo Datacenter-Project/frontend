@@ -1,12 +1,6 @@
 import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import Divider from "@material-ui/core/Divider";
-import InboxIcon from "@material-ui/icons/Inbox";
-import DraftsIcon from "@material-ui/icons/Drafts";
 import CardListItem from "./listitem";
 const useStyles = makeStyles(theme => ({
   root: {
@@ -17,19 +11,41 @@ const useStyles = makeStyles(theme => ({
 
 export default function SimpleList(props) {
   const classes = useStyles();
-  let documents = null;
+
+//   const [documents, setDocuments] = React.useState(null);
+//   const [images, setImages] = React.useState(null);
+
 //   React.useEffect(() => {
-//       setDocuments(props.documents)
-//   });
-  documents = props.documents
-  
+//     setDocuments(props.documents)
+//     setImages(props.images)
+//   },[]);
+
+    let documents = []
+    let images = []
+
+    documents = props.documents
+    images = props.images
+
+    let i,j;
+    if (documents && images) {
+        for(i = 0; i < images.length; i++) {
+            for(j = 0; j < documents.length; j++) {
+                if (images[i].uuid === documents[j]._source.uuid) {
+                    documents[j].image = images[i].image
+                    break
+                }
+            }
+        }
+    }
   return (
     <div className={classes.root}>
+       {documents && images ? (
       <List component="listview" aria-label="documents">
         {documents.map((doc) => (
-            <CardListItem name={doc._source.uuid} text={doc._source.ocr_text} uuid={doc._source.uuid}/>
+            <CardListItem name={doc._source.uuid} text={doc._source.ocr_text} uuid={doc._source.uuid} image={doc.image}/>
         ))}
       </List>
+      ) : null}
     </div>
   );
 }
