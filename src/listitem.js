@@ -17,6 +17,7 @@ import Divider from '@material-ui/core/Divider';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
+import TableView from './tableview';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,7 +58,7 @@ export default function MediaControlCard(props) {
   const classes = useStyles();
   let name = props.name
   let text = props.text
-  
+  let uuid = props.uuid
   const [open, setOpen] = React.useState(false);
   const [scroll, setScroll] = React.useState('paper');
   const [grammarOpen, setGrammarOpen] = React.useState(false);
@@ -78,7 +79,6 @@ export default function MediaControlCard(props) {
   const handleGrammarClose = () => {
     setGrammarOpen(false);
   };
-
 
   const descriptionElementRef = React.useRef(null);
 
@@ -148,7 +148,7 @@ export default function MediaControlCard(props) {
             </Typography>
           </Toolbar>
         </AppBar>
-        
+        <TableView uuid={uuid}/>
       </Dialog>
     </div>
   );

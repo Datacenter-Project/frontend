@@ -27,7 +27,7 @@ export default function SimpleList(props) {
     <div className={classes.root}>
       <List component="listview" aria-label="documents">
         {documents.map((doc) => (
-            <CardListItem name={doc._source.uuid} text={doc._source.ocr_text}/>
+            <CardListItem name={doc._source.uuid} text={doc._source.ocr_text} uuid={doc._source.uuid}/>
         ))}
       </List>
     </div>

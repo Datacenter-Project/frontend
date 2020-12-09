@@ -11,6 +11,7 @@ import DocumentList from './listview';
 import { useSnackbar } from 'notistack';
 import axios from "axios";
 import LinearProgress from '@material-ui/core/LinearProgress';
+import no_results from './no_results.png';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -193,8 +194,9 @@ export default function SearchAppBar() {
         </Toolbar>
       </AppBar>
       {!isLoading && documents? (
-        <DocumentList documents = {documents}/>
-      ) : <LinearProgress color="secondary"/>}
+            <DocumentList documents = {documents}/>
+        ) : <LinearProgress color="secondary"/>
+      }
     </div>
   );
 }
