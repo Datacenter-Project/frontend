@@ -100,7 +100,8 @@ export default function SearchAppBar() {
     })
     .then(({ data }) => {
       setDocuments(data)
-      enqueueSnackbar(successText, {variant: 'success'});
+      if (successText)
+        enqueueSnackbar(successText, {variant: 'success'});
       
       isLoading = false;
     })
@@ -151,7 +152,7 @@ export default function SearchAppBar() {
         console.log(response)
         isLoading = false;
         enqueueSnackbar('Document uploaded successfully!', {variant: 'success'});
-        getDocs('Data updated successfully!');
+        getDocs('');
       })
       .catch(err => {
         console.log(err);
