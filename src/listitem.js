@@ -55,10 +55,10 @@ const useStyles = makeStyles(theme => ({
 export default function MediaControlCard(props) {
   const classes = useStyles();
 
-  const [name, setname] = React.useState("");
-  const [text, settext] = React.useState("");
-  const [uuid, setuuid] = React.useState("");
-  const [image, setimage] = React.useState("");
+//   const [name, setname] = React.useState("");
+//   const [text, settext] = React.useState("");
+//   const [uuid, setuuid] = React.useState("");
+//   const [image, setimage] = React.useState("");
 
   const [open, setOpen] = React.useState(false);
   const [scroll, setScroll] = React.useState('paper');
@@ -81,34 +81,34 @@ export default function MediaControlCard(props) {
     setGrammarOpen(false);
   };
 
-  React.useEffect(() => {
-    setname(props.doc._source.uuid)
-    settext(props.doc._source.ocr_text)
-    setuuid(props.doc._source.uuid)
-    setimage(props.doc._id)
+//   React.useEffect(() => {
+//     setname(props.doc._source.uuid)
+//     settext(props.doc._source.ocr_text)
+//     setuuid(props.doc._source.uuid)
+//     setimage(props.doc.image)
 
-  }, [])
+//   }, [])
 
   const descriptionElementRef = React.useRef(null);
-  console.log(image)
+
   return (
       <div>
         <Card className={classes.root}>
         <CardMedia
             className={classes.cover}
             component='img'
-            src={image}
+            src={props.doc.image}
             title="Live from space album cover"
         />
         <div className={classes.details}>
             <CardContent className={classes.content}>
             <Typography component="h5" variant="h5">
-                {name}
+                {props.doc._source.uuid}
             </Typography>
             <Typography variant="subtitle1" color="textSecondary"> 
-            {text.length > 200 ? (
-                    <span>{text.substring(0, 200)}... <a style={{color:'#6200EE', textDecoration:'underline', cursor: 'pointer'}} onClick={handleClickOpen('paper')}>Read more</a></span>
-                ): text}
+            {props.doc._source.ocr_text.length > 200 ? (
+                    <span>{props.doc._source.ocr_text.substring(0, 200)}... <a style={{color:'#6200EE', textDecoration:'underline', cursor: 'pointer'}} onClick={handleClickOpen('paper')}>Read more</a></span>
+                ): props.doc._source.ocr_text}
             </Typography>
             </CardContent>
             <div className={classes.controls}>
@@ -129,14 +129,14 @@ export default function MediaControlCard(props) {
             aria-labelledby="scroll-dialog-title"
             aria-describedby="scroll-dialog-description"
         >
-            <DialogTitle id="scroll-dialog-title">Full Text for {name}</DialogTitle>
+            <DialogTitle id="scroll-dialog-title">Full Text for {props.doc._source.uuid}</DialogTitle>
             <DialogContent dividers={scroll === 'paper'}>
             <DialogContentText
                 id="scroll-dialog-description"
                 ref={descriptionElementRef}
                 tabIndex={-1}
             >
-                {text}
+                {props.doc._source.ocr_text}
             </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -154,11 +154,11 @@ export default function MediaControlCard(props) {
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-                Grammar Check for {name}
+                Grammar Check for {props.doc._source.uuid}
             </Typography>
           </Toolbar>
         </AppBar>
-        <TableView uuid={uuid}/>
+        <TableView uuid={props.doc._source.uuid}/>
       </Dialog>
     </div>
   );

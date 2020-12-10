@@ -75,6 +75,7 @@ export default function SearchAppBar() {
   const classes = useStyles();
   const [documents, setDocuments] = React.useState([]);
   const [tempDocuments, settempDocuments] = React.useState([]);
+  const [totaldocuments, settotaldocuments] = React.useState([]);
   //const [images, setImages] = React.useState([]);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   let searchText = "";
@@ -95,7 +96,7 @@ export default function SearchAppBar() {
   const getDocs = (successText) => {
     isLoading = true;
     axios
-    .get(`http://localhost:5000/getDocs`, {
+    .get(`http://35.239.61.25:5000/getDocs`, {
       params: {
         start: 0,
         size: 25
@@ -110,15 +111,13 @@ export default function SearchAppBar() {
       return data
     })
     .then(tempDocuments => {
-        console.log("aaa")
         let i;
         let imagesList = []
-        console.log(documents)
 
         let promises = [];
         for (i = 0; i < tempDocuments.length; i++) {
             promises.push(
-                axios.get(`http://localhost:5000/getImage`, {
+                axios.get(`http://35.239.61.25:5000/getImage`, {
                                 params: {
                                 uuid: tempDocuments[i]._source.uuid
                                 },responseType: 'blob'
@@ -130,12 +129,14 @@ export default function SearchAppBar() {
         }
         Promise.all(promises).then(() => {
             for (i = 0; i < tempDocuments.length; i++) {
-                tempDocuments[i]._id = imagesList[i]
+                tempDocuments[i].image = imagesList[i]
             }
             setDocuments(tempDocuments)
+            settotaldocuments(tempDocuments)
         })
 
     })
+
     .catch(err => {
       enqueueSnackbar('Something went wrong while fetching documents. Please refresh.', {variant: 'error'});
       console.log(err);
@@ -152,7 +153,7 @@ export default function SearchAppBar() {
       isLoading = true;
       axios
       .post(
-        `http://localhost:5000/upload`,
+        `http://35.239.61.25:5000/upload`,
         formData,
         {
             headers: {
@@ -161,7 +162,6 @@ export default function SearchAppBar() {
         }
       )
       .then(response => {
-        console.log(response)
         isLoading = false;
         enqueueSnackbar('Document uploaded successfully!', {variant: 'success'});
         setTimeout(() => {
@@ -181,8 +181,9 @@ export default function SearchAppBar() {
     searchText = e.target.value;
     if(searchText.charAt(searchText.length-1) !== " ") {
         isLoading = true;
+        
         axios
-        .get(`http://localhost:5000/search`, {
+        .get(`http://35.239.61.25:5000/search`, {
             params: {
             text: searchText
             }
@@ -193,32 +194,21 @@ export default function SearchAppBar() {
             return data
           })
           .then(tempDocuments => {
-              console.log("aaa")
-              let i;
-              let imagesList = []
-              console.log(documents)
-      
-              let promises = [];
-              for (i = 0; i < tempDocuments.length; i++) {
-                  promises.push(
-                      axios.get(`http://localhost:5000/getImage`, {
-                                      params: {
-                                      uuid: tempDocuments[i]._source.uuid
-                                      },responseType: 'blob'
-                                  }).then(response => {
-                      // do something with response
-                          imagesList.push(URL.createObjectURL(response.data));
-                      })
-                  )
-              }
-              Promise.all(promises).then(() => {
-                  for (i = 0; i < tempDocuments.length; i++) {
-                      tempDocuments[i]._id = imagesList[i]
-                  }
-                  setDocuments(tempDocuments)
-              })
-      
-          })
+            let i,j;
+            let tempArray = []
+            for (i = 0; i < tempDocuments.length; i++) {
+                for (j=0;j<totaldocuments.length;j++)
+                {
+                    if (tempDocuments[i]._id == totaldocuments[j]._id)
+                    {
+                        tempArray.push(totaldocuments[j])
+                        break
+                    }
+                }
+            }
+            setDocuments(tempArray)
+    
+        })
         
         .catch(err => {
             console.log(err);
@@ -226,8 +216,7 @@ export default function SearchAppBar() {
         })
     }
   }
-  
-  {console.log("just before return", documents)}
+
   return (
     <div className={classes.root}>
       <AppBar position="sticky">

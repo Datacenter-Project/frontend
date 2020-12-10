@@ -49,7 +49,7 @@ export default function StickyHeadTable(props) {
   let isLoading = false;
   const [results, setResults] = React.useState(null);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  
+
   React.useEffect(() => {
     checkGrammar(props.uuid)
   },[]);
@@ -57,7 +57,7 @@ export default function StickyHeadTable(props) {
   let checkGrammar = (uuid) => {
     isLoading = true;
     axios
-        .get(`http://localhost:5000/grammar`, {
+        .get(`http://35.239.61.25:5000/grammar`, {
             params: {
                 uuid: uuid
             }
@@ -91,7 +91,6 @@ export default function StickyHeadTable(props) {
         })
   }
 
-  console.log(results)
   return (
     
     <Paper className={classes.root}>
