@@ -54,10 +54,12 @@ const useStyles = makeStyles(theme => ({
   
 export default function MediaControlCard(props) {
   const classes = useStyles();
-  let name = props.name
-  let text = props.text
-  let uuid = props.uuid
-  let image = props.image
+
+  const [name, setname] = React.useState("");
+  const [text, settext] = React.useState("");
+  const [uuid, setuuid] = React.useState("");
+  const [image, setimage] = React.useState("");
+
   const [open, setOpen] = React.useState(false);
   const [scroll, setScroll] = React.useState('paper');
   const [grammarOpen, setGrammarOpen] = React.useState(false);
@@ -79,14 +81,23 @@ export default function MediaControlCard(props) {
     setGrammarOpen(false);
   };
 
-  const descriptionElementRef = React.useRef(null);
+  React.useEffect(() => {
+    setname(props.doc._source.uuid)
+    settext(props.doc._source.ocr_text)
+    setuuid(props.doc._source.uuid)
+    setimage(props.doc._id)
 
+  }, [])
+
+  const descriptionElementRef = React.useRef(null);
+  console.log(image)
   return (
       <div>
         <Card className={classes.root}>
         <CardMedia
             className={classes.cover}
-            image={image}
+            component='img'
+            src={image}
             title="Live from space album cover"
         />
         <div className={classes.details}>

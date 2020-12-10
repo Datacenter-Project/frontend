@@ -73,8 +73,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function SearchAppBar() {
   const classes = useStyles();
-  const [documents, setDocuments] = React.useState(null);
-  const [images, setImages] = React.useState(null);
+  const [documents, setDocuments] = React.useState([]);
+  const [tempDocuments, settempDocuments] = React.useState([]);
+  //const [images, setImages] = React.useState([]);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   let searchText = "";
   let isLoading = false;
@@ -84,51 +85,97 @@ export default function SearchAppBar() {
     getDocs('Data fetched successfully!');
   }, []);
 
-  React.useEffect(() => {
-    if(documents) {
-        getImages()
-    }
-  }, [documents]);
+//   React.useEffect(() => {
+//     if(documents) {
+        
+//     }
+//   }, [documents]);
+
   
   const getDocs = (successText) => {
+    isLoading = true;
     axios
     .get(`http://localhost:5000/getDocs`, {
       params: {
         start: 0,
-        size: 10
+        size: 25
       }
     })
     .then(({ data }) => {
-      setDocuments(data)
+      settempDocuments(data)
       if (successText)
         enqueueSnackbar(successText, {variant: 'success'});
       
       isLoading = false;
+      return data
+    })
+    .then(tempDocuments => {
+        console.log("aaa")
+        let i;
+        let imagesList = []
+        console.log(documents)
+
+        let promises = [];
+        for (i = 0; i < tempDocuments.length; i++) {
+            promises.push(
+                axios.get(`http://localhost:5000/getImage`, {
+                                params: {
+                                uuid: tempDocuments[i]._source.uuid
+                                },responseType: 'blob'
+                            }).then(response => {
+                // do something with response
+                    imagesList.push(URL.createObjectURL(response.data));
+                })
+            )
+        }
+        Promise.all(promises).then(() => {
+            for (i = 0; i < tempDocuments.length; i++) {
+                tempDocuments[i]._id = imagesList[i]
+            }
+            setDocuments(tempDocuments)
+        })
+        // for (i = 0; i < documents.length; i++) {
+        //     console.log(documents[i])
+        //     let uuid = documents[i]._source.uuid
+        //     //imagesList.push({uuid: uuid, image: "https://source.unsplash.com/201x201/?page"})
+        //     axios
+        //         .get(`http://localhost:5000/getImage`, {
+        //             params: {
+        //             uuid: uuid
+        //             }
+        //         })
+        //         .then(({ data }) => {
+        //             console.log(i)
+        //             //console.log(documents[0])
+        //             documents[i]._id = data
+        //         })
+        //         .catch(err => {
+        //             console.log(err);
+        //     })
+        // }
+        // let x,j;
+        // console.log(documents.length,imagesList.length)
+        // if (documents.length > 0 && imagesList.length > 0) {
+        //     console.log("here", imagesList.length, documents.length)
+        //     for(x = 0; x < imagesList.length; x++) {
+        //         console.log(x)
+        //         for(j = 0; j < documents.length; j++) {
+        //             console.log(imagesList[x].uuid, documents[j]._source.uuid)
+        //             if (imagesList[x].uuid === documents[j]._source.uuid) {
+        //                 documents[j].image = imagesList[x].image
+        //                 console.log(documents[j])
+        //                 break
+        //             }
+        //         }
+        //     }
+        // }
+        // setImages(imagesList)
     })
     .catch(err => {
       enqueueSnackbar('Something went wrong while fetching documents. Please refresh.', {variant: 'error'});
       console.log(err);
       isLoading = false;
     })
-  }
-
-  const getImages = () => {
-    let i;
-    let imagesList = []
-    for (i = 0; i < documents.length; i++) {
-        let uuid = documents[i]._source.uuid
-        imagesList.push({uuid: uuid, image: "https://source.unsplash.com/201x201/?page"})
-        // axios
-        //     .get(`http://localhost:5000/getImage`)
-        //     .then(({ data }) => {
-        //         console.log(data.image)
-        //         imagesList.push({uuid: uuid, image: data})
-        //     })
-        //     .catch(err => {
-        //         console.log(err);
-        // })
-    }
-    setImages(imagesList)
   }
 
   let handleUploadClick = (e) => {
@@ -152,7 +199,10 @@ export default function SearchAppBar() {
         console.log(response)
         isLoading = false;
         enqueueSnackbar('Document uploaded successfully!', {variant: 'success'});
-        getDocs('');
+        setTimeout(() => {
+            getDocs('');
+        }, 7000);
+        
       })
       .catch(err => {
         console.log(err);
@@ -183,6 +233,7 @@ export default function SearchAppBar() {
     }
   }
   
+  {console.log("just before return", documents)}
   return (
     <div className={classes.root}>
       <AppBar position="sticky">
@@ -218,8 +269,9 @@ export default function SearchAppBar() {
             </label>
         </Toolbar>
       </AppBar>
-      {!isLoading && documents && images? (
-            <DocumentList documents = {documents} images = {images}/>
+      {!isLoading && documents ? (
+          
+            <DocumentList documents = {documents}/>
         ) : <LinearProgress color="secondary"/>
       }
     </div>
