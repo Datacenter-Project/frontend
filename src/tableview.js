@@ -69,7 +69,7 @@ export default function StickyHeadTable(props) {
             let i,j;
             for (i = 0; i < data.length; i++) {
                 let possible_replacements = ""
-                if (data[i].replacements) {
+                if (data[i].replacements.length > 0) {
                     for (j = 0; j < data[i].replacements.length - 1; j++) {
                         possible_replacements += data[i].replacements[j].value + ", "
                     }
@@ -77,9 +77,9 @@ export default function StickyHeadTable(props) {
                 }
                 let offset = data[i].context.offset
                 let length = data[i].context.length
-                let first_half = data[i].sentence.substr(0, offset)
-                let second_half = data[i].sentence.substr(offset + length, data[i].sentence.length)
-                let incorrect_word = data[i].sentence.substr(offset, length)
+                let first_half = data[i].context.text.substr(0, offset)
+                let second_half = data[i].context.text.substr(offset + length, data[i].sentence.length)
+                let incorrect_word = data[i].context.text.substr(offset, length)
                 let full_string = <div><span style={{color:"#000000"}}>{first_half}</span> <span style={{color:"#ff0000", background: "#FFFF00"}}>{incorrect_word}</span><span style={{color:"#000000"}}>{second_half}</span></div>
                 rows.push(createData(full_string, data[i].shortMessage, data[i].message, incorrect_word, possible_replacements))
             } 
