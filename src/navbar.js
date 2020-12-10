@@ -96,7 +96,7 @@ export default function SearchAppBar() {
   const getDocs = (successText) => {
     isLoading = true;
     axios
-    .get(`https://35.239.61.25:5000/getDocs`, {
+    .get(`http://35.239.61.25:5000/getDocs`, {
       params: {
         start: 0,
         size: 25
@@ -117,19 +117,26 @@ export default function SearchAppBar() {
         let promises = [];
         for (i = 0; i < tempDocuments.length; i++) {
             promises.push(
-                axios.get(`https://35.239.61.25:5000/getImage`, {
+                axios.get(`http://35.239.61.25:5000/getImage`, {
                                 params: {
                                 uuid: tempDocuments[i]._source.uuid
                                 },responseType: 'blob'
                             }).then(response => {
                 // do something with response
-                    imagesList.push(URL.createObjectURL(response.data));
+                    imagesList.push(response);
                 })
             )
         }
         Promise.all(promises).then(() => {
-            for (i = 0; i < tempDocuments.length; i++) {
-                tempDocuments[i].image = imagesList[i]
+            console.log(imagesList)
+            let x,j;
+            for (x = 0; x < tempDocuments.length; x++) {
+                for (j = 0; j < imagesList.length; j++) {
+                    if (tempDocuments[x]._source.uuid === imagesList[j].config.params.uuid) {
+                        tempDocuments[x].image = URL.createObjectURL(imagesList[j].data)
+                        break
+                    }
+                }
             }
             setDocuments(tempDocuments)
             settotaldocuments(tempDocuments)
@@ -153,7 +160,7 @@ export default function SearchAppBar() {
       isLoading = true;
       axios
       .post(
-        `https://35.239.61.25:5000/upload`,
+        `http://35.239.61.25:5000/upload`,
         formData,
         {
             headers: {
@@ -166,7 +173,7 @@ export default function SearchAppBar() {
         enqueueSnackbar('Document uploaded successfully!', {variant: 'success'});
         setTimeout(() => {
             getDocs('');
-        }, 7000);
+        }, 5000);
         
       })
       .catch(err => {
@@ -183,7 +190,7 @@ export default function SearchAppBar() {
         isLoading = true;
         
         axios
-        .get(`https://35.239.61.25:5000/search`, {
+        .get(`http://35.239.61.25:5000/search`, {
             params: {
             text: searchText
             }
