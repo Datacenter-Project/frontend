@@ -96,7 +96,7 @@ export default function SearchAppBar() {
   const getDocs = (successText) => {
     isLoading = true;
     axios
-    .get(`http://35.239.61.25:5000/getDocs`, {
+    .get(`https://35.239.61.25:5000/getDocs`, {
       params: {
         start: 0,
         size: 25
@@ -117,7 +117,7 @@ export default function SearchAppBar() {
         let promises = [];
         for (i = 0; i < tempDocuments.length; i++) {
             promises.push(
-                axios.get(`http://35.239.61.25:5000/getImage`, {
+                axios.get(`https://35.239.61.25:5000/getImage`, {
                                 params: {
                                 uuid: tempDocuments[i]._source.uuid
                                 },responseType: 'blob'
@@ -153,7 +153,7 @@ export default function SearchAppBar() {
       isLoading = true;
       axios
       .post(
-        `http://35.239.61.25:5000/upload`,
+        `https://35.239.61.25:5000/upload`,
         formData,
         {
             headers: {
@@ -183,7 +183,7 @@ export default function SearchAppBar() {
         isLoading = true;
         
         axios
-        .get(`http://35.239.61.25:5000/search`, {
+        .get(`https://35.239.61.25:5000/search`, {
             params: {
             text: searchText
             }
@@ -222,7 +222,7 @@ export default function SearchAppBar() {
       <AppBar position="sticky">
         <Toolbar>
           <Typography className={classes.title} variant="h6" noWrap>
-            OCR and Grammar Check
+            SCRAMMAR!
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>

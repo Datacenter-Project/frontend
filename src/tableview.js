@@ -57,7 +57,7 @@ export default function StickyHeadTable(props) {
   let checkGrammar = (uuid) => {
     isLoading = true;
     axios
-        .get(`http://35.239.61.25:5000/grammar`, {
+        .get(`https://35.239.61.25:5000/grammar`, {
             params: {
                 uuid: uuid
             }
